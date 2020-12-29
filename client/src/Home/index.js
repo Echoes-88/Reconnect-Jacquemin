@@ -2,6 +2,7 @@ import React from "react";
 import "../App.css";
 import axios from 'axios';
 import names from "../names";
+import "./index.css";
 
 const apiEndpoint = "https://avatars.dicebear.com/v2/avataaars/";
 const apiOptions = "options[mood][]=happy";
@@ -21,10 +22,34 @@ function Home() {
         []
     );
 
+
     const fetchBeneficiaries = async () => {
 
         const beneficiaries = await axios.get(beneficiariesEndpoint);
         setRegisteredBeneficiaries(beneficiaries.data['hydra:member'])
+    };
+
+
+    // Unregistered Beneficiaries state
+    const [inputUnregisteredBeneficiaries, setInputUnregisteredBeneficiaries] = React.useState("");
+    
+    const [unregisteredBeneficiaries, setUnregisteredBeneficiaries] = React.useState([]);
+
+    const [filteredBeneficiaries, setFilteredBeneficiaries] = React.useState([]);
+
+
+    // filter unregistered beneficiaries function
+    const filterBeneficiaries = async (e) => {
+
+        setInputUnregisteredBeneficiaries(e.target.value)
+
+        if(inputUnregisteredBeneficiaries.length <= 1) {
+            setFilteredBeneficiaries(unregisteredBeneficiaries)
+        } else {
+            setFilteredBeneficiaries(unregisteredBeneficiaries.filter((beneficiary) => (
+                beneficiary.name.includes(inputUnregisteredBeneficiaries)
+            )));
+        }
     };
 
     // useEffect on load page
@@ -37,12 +62,20 @@ function Home() {
             setisLogged(true);
 
             fetchBeneficiaries();
+
+        // Generating unregistered Beneficiaries
+        const unregistered = [...Array(12).keys()].map(number => ({
+            name: names[Math.floor(Math.random() * names.length)]
+        }))
+        
+        setUnregisteredBeneficiaries(unregistered);
+        setFilteredBeneficiaries(unregistered)
+            
+
         }
     }, [isLogged]);
 
-    const beneficiaryNames = [...Array(12).keys()].map(number => ({
-        name: names[Math.floor(Math.random() * names.length)]
-    }));
+
 
     return (
         <>
@@ -74,8 +107,14 @@ function Home() {
                 </div>
                 <hr/>
                 <h3>Personnes non stockées</h3>
+
+                <form className="SearchBar">
+                    <label>Recherche</label>
+                    <input type="text" placeholder="nom utilisateur" value={inputUnregisteredBeneficiaries} onChange={filterBeneficiaries} />
+                </form>
+
                 <div className="Beneficiaries-list">
-                    {beneficiaryNames.map((beneficiary, index) => (
+                    {filteredBeneficiaries.map((beneficiary, index) => (
                         <div className="Beneficiary-card" key={beneficiary.name + index}>
                             <img src={getAvatar(beneficiary.name)} alt={beneficiary.name}/>
                             <span>{beneficiary.name}</span>

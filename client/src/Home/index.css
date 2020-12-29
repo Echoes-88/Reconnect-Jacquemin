@@ -1,0 +1,21 @@
+form {
+    margin-bottom: 1.5rem;
+}
+
+.SearchBar input {
+    background-color:#FFF3F3;
+    padding:0.3rem;
+    border:1px solid #282c34;
+    border-radius:5px;
+    box-shadow:1px 1px 2px #C0C0C0 inset;
+}
+
+.SearchBar input[type=submit] {
+    width:20%;
+    cursor: pointer;
+}
+
+.SearchBar label {
+    display:inline;
+    margin-right: 1rem;
+}
