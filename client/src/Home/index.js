@@ -13,46 +13,66 @@ const getAvatar = name => `${apiEndpoint}${name}.svg?${apiOptions}`;
 
 function Home() {
 
-    // user state
+    // USER STATE
     const [userInformations, setUserInformations] = React.useState([]);
 
     const [isLogged, setisLogged] = React.useState(false);
 
-    const [registeredBeneficiaries, setRegisteredBeneficiaries] = React.useState(
-        []
-    );
+    // UNREGISTERED BENEFICIARIES
+
+        // Unregistered Beneficiaries state
+        const [inputUnregisteredBeneficiaries, setInputUnregisteredBeneficiaries] = React.useState("");
+        
+        const [unregisteredBeneficiaries, setUnregisteredBeneficiaries] = React.useState([]);
+
+        const [filteredBeneficiaries, setFilteredBeneficiaries] = React.useState([]);
 
 
-    const fetchBeneficiaries = async () => {
+        // filter unregistered beneficiaries function
+        const filterUnregisteredBeneficiaries = async (e) => {
 
-        const beneficiaries = await axios.get(beneficiariesEndpoint);
-        setRegisteredBeneficiaries(beneficiaries.data['hydra:member'])
-    };
+            setInputUnregisteredBeneficiaries(e.target.value)
 
+            if(inputUnregisteredBeneficiaries.length <= 1) {
+                setFilteredBeneficiaries(unregisteredBeneficiaries)
+            } else {
+                setFilteredBeneficiaries(unregisteredBeneficiaries.filter((beneficiary) => (
+                    beneficiary.name.includes(inputUnregisteredBeneficiaries)
+                )));
+            }
+        };
 
-    // Unregistered Beneficiaries state
-    const [inputUnregisteredBeneficiaries, setInputUnregisteredBeneficiaries] = React.useState("");
-    
-    const [unregisteredBeneficiaries, setUnregisteredBeneficiaries] = React.useState([]);
+    // REGISTERED BENEFICIARIES
 
-    const [filteredBeneficiaries, setFilteredBeneficiaries] = React.useState([]);
+        // Fetch registered beneficiaries
+        const fetchBeneficiaries = async () => {
 
+            const beneficiaries = await axios.get(beneficiariesEndpoint);
+            setRegisteredBeneficiaries(beneficiaries.data['hydra:member'])
+        };
 
-    // filter unregistered beneficiaries function
-    const filterBeneficiaries = async (e) => {
+        // Registered Benefericiaries state
+        const [inputRegisteredBeneficiaries, setInputRegisteredBeneficiaries] = React.useState("");
 
-        setInputUnregisteredBeneficiaries(e.target.value)
+        const [registeredBeneficiaries, setRegisteredBeneficiaries] = React.useState([]);
 
-        if(inputUnregisteredBeneficiaries.length <= 1) {
-            setFilteredBeneficiaries(unregisteredBeneficiaries)
-        } else {
-            setFilteredBeneficiaries(unregisteredBeneficiaries.filter((beneficiary) => (
-                beneficiary.name.includes(inputUnregisteredBeneficiaries)
-            )));
-        }
-    };
+        // filter registered beneficiaries function
+        const filterRegisteredBeneficiaries = async (e) => {
 
-    // useEffect on load page
+            setInputRegisteredBeneficiaries(e.target.value)
+
+            const beneficiaries = await axios.get(beneficiariesEndpoint)
+
+            if(inputRegisteredBeneficiaries.length <= 1) {
+                setRegisteredBeneficiaries(beneficiaries.data['hydra:member'])
+            } else {
+                setRegisteredBeneficiaries(beneficiaries.data['hydra:member'].filter((beneficiary) => (
+                    beneficiary.name.includes(inputRegisteredBeneficiaries)
+                )));
+            }
+        };
+
+    // USE EFFECT ON LOAD
     React.useEffect(() => {
 
         // Looking for token in local storage
@@ -67,15 +87,11 @@ function Home() {
         const unregistered = [...Array(12).keys()].map(number => ({
             name: names[Math.floor(Math.random() * names.length)]
         }))
-        
+
         setUnregisteredBeneficiaries(unregistered);
         setFilteredBeneficiaries(unregistered)
-            
-
         }
     }, [isLogged]);
-
-
 
     return (
         <>
@@ -97,6 +113,12 @@ function Home() {
 
                 <hr/>
                 <h3>Personnes stockées en base</h3>
+
+                <form className="SearchBar">
+                    <label>Recherche</label>
+                    <input type="text" placeholder="nom utilisateur" value={inputRegisteredBeneficiaries} onChange={filterRegisteredBeneficiaries} />
+                </form>
+
                 <div className="Beneficiaries-list">
                     {registeredBeneficiaries.map((beneficiary) => (
                         <div className="Beneficiary-card" key={beneficiary.id}>
@@ -110,7 +132,7 @@ function Home() {
 
                 <form className="SearchBar">
                     <label>Recherche</label>
-                    <input type="text" placeholder="nom utilisateur" value={inputUnregisteredBeneficiaries} onChange={filterBeneficiaries} />
+                    <input type="text" placeholder="nom utilisateur" value={inputUnregisteredBeneficiaries} onChange={filterUnregisteredBeneficiaries} />
                 </form>
 
                 <div className="Beneficiaries-list">
