@@ -72,6 +72,13 @@ function Home() {
             }
         };
 
+    // ADD BENEFICIARY IN DATABASE
+    const addBeneficiaries = async (name) => {
+        const test = await axios.post('http://localhost:8000/api/beneficiaries', {
+            name: name
+        });
+    };
+
     // USE EFFECT ON LOAD
     React.useEffect(() => {
 
@@ -140,6 +147,7 @@ function Home() {
                         <div className="Beneficiary-card" key={beneficiary.name + index}>
                             <img src={getAvatar(beneficiary.name)} alt={beneficiary.name}/>
                             <span>{beneficiary.name}</span>
+                            <button onClick={e => addBeneficiaries(beneficiary.name)}>Ajouter à la BDD</button>
                         </div>
                     ))}
                 </div>
