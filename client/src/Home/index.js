@@ -72,11 +72,17 @@ function Home() {
             }
         };
 
-    // ADD BENEFICIARY IN DATABASE
+    // ADD AND DELETE BENEFICIARY IN DATABASE
     const addBeneficiaries = async (name) => {
-        const test = await axios.post('http://localhost:8000/api/beneficiaries', {
+        await axios.post('http://localhost:8000/api/beneficiaries', {
             name: name
         });
+        fetchBeneficiaries()
+    };
+
+    const deleteBeneficiary = async (id) => {
+        await axios.delete(`http://localhost:8000/api/beneficiaries/${id}`);
+        fetchBeneficiaries()
     };
 
     // USE EFFECT ON LOAD
@@ -131,6 +137,7 @@ function Home() {
                         <div className="Beneficiary-card" key={beneficiary.id}>
                             <img src={getAvatar(beneficiary.name)} alt={beneficiary.name}/>
                             <span>{beneficiary.name}</span>
+                            <button onClick={e => deleteBeneficiary(beneficiary.id)}>Supprimer de la BDD</button>
                         </div>
                     ))}
                 </div>
