@@ -29,6 +29,11 @@ class Beneficiary
      */
     private $createdAt;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $userEmail;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +64,18 @@ class Beneficiary
     public function setCreatedAt(?\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUserEmail(): ?string
+    {
+        return $this->userEmail;
+    }
+
+    public function setUserEmail(?string $userEmail): self
+    {
+        $this->userEmail = $userEmail;
 
         return $this;
     }
