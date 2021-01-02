@@ -74,9 +74,10 @@ function Home() {
 
     // ADD AND DELETE BENEFICIARY IN DATABASE
     const addBeneficiaries = async (name) => {
-        await axios.post('http://localhost:8000/api/beneficiaries', {
+        const test = await axios.post('http://localhost:8000/api/beneficiaries', {
             name: name
         });
+        console.log(test)
         fetchBeneficiaries()
     };
 
