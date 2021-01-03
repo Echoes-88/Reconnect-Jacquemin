@@ -89,23 +89,28 @@ function Home() {
 
     // USE EFFECT ON LOAD
     React.useEffect(() => {
-
-        // Looking for token in local storage
-        if(localStorage.getItem('token')) {
+          
+        // Testing connection to db
+          let AuthUser = () => {
             axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
+            return fetchBeneficiaries();
+          };
+          
+          AuthUser().then(processLogin);
+          
+          function processLogin() {
             setUserInformations(localStorage.getItem('email'))
             setisLogged(true);
 
-            fetchBeneficiaries();
+            // Generating unregistered Beneficiaries
+            const unregistered = [...Array(12).keys()].map(number => ({
+                name: names[Math.floor(Math.random() * names.length)]
+            }))
 
-        // Generating unregistered Beneficiaries
-        const unregistered = [...Array(12).keys()].map(number => ({
-            name: names[Math.floor(Math.random() * names.length)]
-        }))
+            setUnregisteredBeneficiaries(unregistered);
+            setFilteredBeneficiaries(unregistered)
+          }
 
-        setUnregisteredBeneficiaries(unregistered);
-        setFilteredBeneficiaries(unregistered)
-        }
     }, [isLogged]);
 
     return (
